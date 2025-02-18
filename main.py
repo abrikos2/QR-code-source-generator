@@ -2,7 +2,7 @@ import numpy as np
 import pprint
 from PIL import Image
 import tables
-import time # убрать на релизе
+import time 
 class QRCodegenerator:
     def __init__(self, data:str, error_correction="M"):
         self._data:str = data
