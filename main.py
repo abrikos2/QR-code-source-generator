@@ -12,7 +12,7 @@ class QRCodegenerator:
     @property
     def data(self) -> list:
         fill_data = ['11101100', '00010001']
-        result:str = "0100" + ''.join(format(byte, f'0{8 if self.version <=9 else 16 if 10>=self.version<=26 else 16 if 27>=self.version<=40 else 16}b') for byte in {len(self._data)}) + ''.join(format(byte, '08b') for byte in self._data.encode('utf-8'))
+        result:str = "0100" + ''.join(format(len(self._data.encode('utf-8')), f'0{8 if self.version <=9 else 16}b')) + '0000' + ''.join(format(byte, '08b') for byte in self._data.encode('utf-8'))
         data = []
         i = 0 
         while len(data) < self.version_table[self.version] - len(result):
@@ -25,7 +25,7 @@ class QRCodegenerator:
         result = result + ''.join(data)
         num_blocks = self.amount_blocks
         if num_blocks == 1:
-            return result
+            return [result]
         blocks = []
         start = 0
         for i in range(num_blocks):
@@ -34,7 +34,6 @@ class QRCodegenerator:
             start = end
         blocks.sort(key=lambda x: len(x))    
         return blocks
-        
     @property
     def version_table(self) -> dict:     
         return tables.version_table[self.error_correction]
@@ -42,7 +41,7 @@ class QRCodegenerator:
     def amount_blocks(self) -> dict:
         return tables.amount_blocks[self.error_correction][self.version]
     @property
-    def correction_bytes(self) -> dict:
+    def amount_correction_byte(self) -> dict:
         return tables.correction_bytes[self.error_correction][self.version]
     @property
     def version(self) -> int:
@@ -51,6 +50,24 @@ class QRCodegenerator:
             if lenght <= item:
                 return version
         return 10
+    @property
+    def correction_bytes(self) -> list:
+        data = self.data
+        result = []
+        for block in data:
+            bytes_list = []
+            for i in range(0, len(block), 8):
+                byte_str = block[i:i+8].ljust(8, '0')
+                bytes_list.append(int(byte_str, 2))
+            prepared_array = bytes_list + [0] * (max(len(bytes_list), self.amount_correction_byte) - len(bytes_list))
+            ecc_bytes = prepared_array[:self.amount_correction_byte]
+            if self.amount_blocks == 1: 
+                return ecc_bytes
+            result.append(ecc_bytes)
+        return result
+
+    #def generate(self) -> str:
+        
     
         
 
@@ -65,11 +82,13 @@ def save_qr_image(qr_matrix, filename):
 
 def main():
     start = time.time() # убрать на релизе
-    obj =QRCodegenerator("andex-0")
+    obj =QRCodegenerator("https://example.com")
     print(obj.data)
     print(obj.version)
     print(obj.version_table[obj.version])
+    print(len(obj.data[0]))
     print(obj.amount_blocks)
+    print(obj.correction_bytes)
     print(f"execute time: {time.time() -start:.2f} секунд")
     #qr_matrix = create_qr_matrix(data)
     #save_qr_image(qr_matrix, "manual_qrcode.png")
