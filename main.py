@@ -82,13 +82,14 @@ def save_qr_image(qr_matrix, filename):
 
 def main():
     start = time.time() # убрать на релизе
-    obj =QRCodegenerator("https://example.com")
-    print(obj.data)
+    obj =QRCodegenerator("https://exampleasdsdidfgsdfgsdfgsdfgsdfgjfhossiasjdfhdfgsdfgsdfgsdfgsdfglkjahsdfgid")
     print(obj.version)
     print(obj.version_table[obj.version])
     print(len(obj.data[0]))
     print(obj.amount_blocks)
     print(obj.correction_bytes)
+    print(len(obj.correction_bytes[0]))
+    print(obj.amount_correction_byte)
     print(f"execute time: {time.time() -start:.2f} секунд")
     #qr_matrix = create_qr_matrix(data)
     #save_qr_image(qr_matrix, "manual_qrcode.png")
