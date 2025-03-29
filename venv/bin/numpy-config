@@ -1,4 +1,4 @@
-#!/home/daniil/Desktop/Python/Python/QR-code-source-generator/venv/bin/python3.13
+#!/home/daniil/Desktop/Python/QR-code-source-generator/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
