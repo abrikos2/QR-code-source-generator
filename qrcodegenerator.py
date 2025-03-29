@@ -4,6 +4,7 @@ from encoder import Encoder
 from errorcorrection import ErrorCorrection
 from PIL import Image
 import sys
+from io import BytesIO
 
 class QRCodeGenerator:
     def __init__(self):
@@ -73,30 +74,8 @@ class QRCodeGenerator:
         version_info= self.generate_version_information(version)
         self.place_version_information(masked_matrix, version_info)
         final_qr= self.add_quiet_zone(masked_matrix)
-        self.export_to_png(final_qr, output_file)
-        return final_qr
-        
-
-    # def place_finder_patterns(self, qr_matrix):
-    #     finder_pattern_data = [
-    #     [1, 1, 1, 1, 1, 1, 1],
-    #     [1, 0, 0, 0, 0, 0, 1],
-    #     [1, 0, 1, 1, 1, 0, 1],
-    #     [1, 0, 1, 1, 1, 0, 1],
-    #     [1, 0, 1, 1, 1, 0, 1],
-    #     [1, 0, 0, 0, 0, 0, 1],
-    #     [1, 1, 1, 1, 1, 1, 1]
-    # ]
-    #     finder_pattern=  BitArray2D(rows= 7, columns= 7)
-    #     for i in range(7):
-    #         for j in range(7):
-        
-    #             finder_pattern[i,j]= finder_pattern_data[i][j]
-    #     print("here")
-    #     print(finder_pattern)  
-    #     print("****")     
-    #     print(finder_pattern_data)
-    #     return finder_pattern
+        return self.export_to_png(final_qr, output_file)
+        #return final_qr
 
     def place_finder_patterns2(self, qr_matrix):
         finder_pattern = np.array([
@@ -449,15 +428,10 @@ class QRCodeGenerator:
                     for i in range(scale):
                         for j in range(scale):
                             pixels[x * scale + i, y * scale + j] = (0, 0, 0)
+        img_byte_array = BytesIO()
+        image.save(img_byte_array, format="PNG")
+        return img_byte_array.getvalue()
+        if __name__ == '__main__':
+            image.save(filename)
+            print(f"QR code saved as {filename}")
 
-        image.save(filename)
-        print(f"QR code saved as {filename}")
-
-def main():
-
-    qr= QRCodeGenerator()
-    qr.generate(text, output_file)
-
-    
-if __name__ == "__main__":
-    main()
