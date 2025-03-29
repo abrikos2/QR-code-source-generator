@@ -1,7 +1,10 @@
-class Versions:
+class VersionSelector:
     def __init__(self):
         pass
-    def get_versions_info(self, text, encoding):
+
+    #using error correction level M. Max capacity of input chars allowed for numeric, alphanumeric
+    #byte, kanji modes for 40 versions of QR codes
+    def get_versions_info(self, num_chars, encoding):
         versions_info= {
                 1:  [34,  20,  14,  8],
                 2:  [63,  38,  26,  16],
@@ -45,11 +48,16 @@ class Versions:
                 40: [5596, 3391, 2331, 1435]
             }
         for k,v in versions_info.items():
-            if v[encoding] >= len(text):
+            if v[encoding] >= num_chars:
                 return k
         return None
-    def smallest_version(self, text, mode):
-        return self.get_versions_info(len(text), 0) if mode == 'NUMERIC' else self.get_versions_info(len(text), 1) if 'ALPHANUMERIC' else self.get_versions_info(len(text), 2)
-if __name__ == "__main__":
-    obj = Versions()
-    print(obj.smallest_version('00101011010100100110100100101010101000101010100101010100111011010110101111', 'BYTE'))
+
+    def smallest_version(self, text, encoding_mode):
+        version= None
+        num_chars= len(text)
+        if encoding_mode== 'NUMERIC': version= self.get_versions_info(num_chars, 0)
+        elif encoding_mode== 'ALPHANUMERIC': version= self.get_versions_info(num_chars, 1)
+        elif encoding_mode== 'BYTE': version= self.get_versions_info(num_chars, 2)
+        elif encoding_mode== 'KANJI': version= self.get_versions_info(num_chars, 3)    
+        else: raise ValueError("Input is too long for available versions")
+        return version
