@@ -7,8 +7,8 @@ class ErrorCorrection:
     def __init__(self):
         self.encoder= Encoder()
         self.version= VersionSelector()
-        self.gf_exp= [0] * 512 #exponent table
-        self.gf_log= [0] * 256 #log table
+        self.gf_exp= [0] * 512 
+        self.gf_log= [0] * 256 
         self.init_galois_field()
         self.requred_remainder_bits= {
         1: 0, 2: 7, 3: 7, 4: 7, 5: 7,
@@ -21,9 +21,9 @@ class ErrorCorrection:
         36: 0, 37: 0, 38: 0, 39: 0, 40: 0
         }
 
-    #initialize log and exponent table
+  
     def init_galois_field(self):
-        primitve_polynomial= 0x11d #285; used for performing xor operations
+        primitve_polynomial= 0x11d 
         x= 1
         for i in range(0, 255):
             self.gf_exp[i]= x
@@ -52,7 +52,6 @@ class ErrorCorrection:
                 result[i + j] ^= self.gf_multiply(p1[i], p2[j])
         return result
 
-    #message polynominal coeffecients
     def message_polynomial(self, text):
         encoded_text= self.encoder.encode(text)
         i= 0
@@ -63,9 +62,8 @@ class ErrorCorrection:
             list.append(int(t, 2))
         return list
     
-    #long division
     def div(self, message_poly, generator_poly):
-        remainder = message_poly + [0] * (len(generator_poly) - 1) #padding with len(generator polynomial) - 1 zeros
+        remainder = message_poly + [0] * (len(generator_poly) - 1) 
         for i in range(len(message_poly)):
             if remainder[i] != 0:
                 factor = self.gf_log[remainder[i]]
@@ -118,14 +116,11 @@ class ErrorCorrection:
     def generate_error_correction_codewords(self, text, version):
         generator_poly = self.construct_generator_polynomial(version)
         message_poly = self.message_polynomial(text)
-        #Split message polynomial into blocks
         data_blocks = self.split_into_blocks(message_poly, version)
-        #error correction codewords for each block
         ec_blocks = []
         for block in data_blocks:
             ec_block = self.div(block, generator_poly)
             ec_blocks.append(ec_block)
-        #Interleave the data and error correction codewords
         message = self.interleave_blocks(data_blocks, ec_blocks)
         final_message= self.get_final_message(message, version)
         return final_message

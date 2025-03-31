@@ -2,8 +2,6 @@ class VersionSelector:
     def __init__(self):
         pass
 
-    #using error correction level M. Max capacity of input chars allowed for numeric, alphanumeric
-    #byte, kanji modes for 40 versions of QR codes
     def get_versions_info(self, num_chars, encoding):
         versions_info= {
                 1:  [34,  20,  14,  8],

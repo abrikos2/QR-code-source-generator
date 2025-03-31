@@ -18,12 +18,7 @@ class Encoder:
     "S": 28, "T": 29, "U": 30, "V": 31, "W": 32, "X": 33, "Y": 34, "Z": 35, " ": 36,
     "$": 37, "%": 38, "*": 39, "+": 40, "-": 41, ".": 42, "/": 43, ":": 44
 }
-        #0th index: total codewords
-        #1st index: error correcting codewords per block
-        #2nd index: no. of blocks of 1st type
-        #3rd index: no. of blocks of 2nd type
-        #4th index: data codewords per block of 1st type
-        #5th index: data codewords per block of 2nd type
+
         self.block_info= {
     1: [16, 10, 1, 0, 16, 0], 
     2: [28, 16, 1, 0, 28, 0], 
@@ -94,31 +89,22 @@ class Encoder:
         padding_2= self.pad_to_multiples_of_8(padding_1)
         padding_fin= self.add_236_and_17(padding_2, version)
         return padding_fin
-        # if (encoding=="NUMERIC"):
-        #     return encoded_data
-        # elif (encoding=="ALPHANUMERIC"):
-        #     return encoded_data 
-        # elif (encoding== "BYTE"):
-        #     return encoded_data 
-        # elif (encoding== "KANJI"):
-        #     return encoded_data 
+
         
 
     def is_iso8859_1(self, string):
         try:
-            #during encoding, if char is not found in  in ISO8859-1 character table, throw Unicode Error
             string.encode('latin-1')
             return True
         except UnicodeError:
             return False
         
-    #encode string in shift jist & then determine byte ranges
     def is_doubleByteJIS(self, string):
         try:
             jis_encoded = string.encode('shift_jis')
         except UnicodeEncodeError:
             return False
-        if len(jis_encoded) % 2 != 0:  # if odd no. of bytes, not double-byte character
+        if len(jis_encoded) % 2 != 0:  
             return False
         for i in range(0, len(jis_encoded), 2):
             first_byte = jis_encoded[i]
@@ -249,7 +235,7 @@ class Encoder:
             byte = (kanji_encoded[i] << 8) | kanji_encoded[i + 1]
             if 0x8140 <= byte <= 0x9FFC:
                 h= byte - 0x8140
-                res= (((h>>8) & 0xFF) * 0xC0)  + (h & 0xFF) #msb= (h>>8) & 0xFF; lsb= h & 0xFF 
+                res= (((h>>8) & 0xFF) * 0xC0)  + (h & 0xFF) 
                 res_b= format(res, '013b')
             elif 0xE040 <= byte <= 0xEBBF:
                 h= byte - 0xC140
