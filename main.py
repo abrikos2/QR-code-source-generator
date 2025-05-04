@@ -7,7 +7,7 @@ from aiogram.filters import Command
 
 from qrcodegenerator import QRCodeGenerator 
 
-API_TOKEN = os.getenv('API_TOKEN')
+API_TOKEN = '7539220372:AAE8ph8mvFHM2jcqKJWVVlFpJAjciF_tsKk'
 dp = Dispatcher()
 bot = Bot(API_TOKEN)
 QR = QRCodeGenerator()
