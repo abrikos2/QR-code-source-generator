@@ -199,7 +199,7 @@ class QRCodeGenerator:
             for col in range(size):
                 if self.is_data_module(masked_matrix, row, col, version, align_pattern_loc):
                     if self.mask_function(mask_pattern, row, col):
-                        masked_matrix[row, col] = 1 - masked_matrix[row, col]  # Toggle the bit
+                        masked_matrix[row, col] = 1 - masked_matrix[row, col] 
         
         return masked_matrix
 
